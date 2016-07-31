@@ -50,17 +50,12 @@ import pt.ist.fenixframework.Atomic;
 import com.google.common.base.Strings;
 
 public class LibraryAttendance implements Serializable {
+
     public static class PlaceProvider extends AbstractDomainObjectProvider {
         @Override
         public Object provide(Object source, Object currentValue) {
             LibraryAttendance attendance = (LibraryAttendance) source;
-            Set<Space> availableSpaces = new HashSet<Space>();
-            for (Space space : attendance.getLibrary().getChildren()) {
-                if (currentAttendaceCount(space) < space.getAllocatableCapacity()) {
-                    availableSpaces.add(space);
-                }
-            }
-            return availableSpaces;
+            return getAvailableSpaces(attendance);
         }
     }
 
@@ -78,6 +73,16 @@ public class LibraryAttendance implements Serializable {
         public Converter getConverter() {
             return new EnumConverter(RoleType.class);
         }
+    }
+
+    public static Set<Space> getAvailableSpaces(LibraryAttendance attendance) {
+        Set<Space> availableSpaces = new HashSet<Space>();
+        for (Space space : attendance.getLibrary().getChildren()) {
+            if (currentAttendaceCount(space) < space.getAllocatableCapacity()) {
+                availableSpaces.add(space);
+            }
+        }
+        return availableSpaces;
     }
 
     private Space library;

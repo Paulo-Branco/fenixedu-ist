@@ -74,6 +74,9 @@ public class LibraryInformation implements Serializable {
 
     public LibraryInformation(Space library) {
         setLibrary(library);
+        setCapacity(library.getAllocatableCapacity());
+        setLockers(library.getChildren().size());
+
     }
 
     public Space getLibrary() {
