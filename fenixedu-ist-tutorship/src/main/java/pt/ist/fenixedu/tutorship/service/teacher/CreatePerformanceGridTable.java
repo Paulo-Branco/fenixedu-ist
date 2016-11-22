@@ -45,7 +45,7 @@ public class CreatePerformanceGridTable {
         for (Tutorship tutorship : tutorships) {
             PerformanceGridLine newLine = performanceGrid.getNewPerformanceGridLine(tutorship);
 
-            calculateEnrolmentsWithLastExecutionPeriod(newLine, tutorship, monitoringYear);
+            calculateEnrolments(newLine, tutorship, monitoringYear);
             calculateApprovedRatioBySemester(newLine, monitoringYear);
             calculateAritmeticAverage(newLine);
             calculateStudentPerformanceInfo(newLine);
@@ -56,20 +56,10 @@ public class CreatePerformanceGridTable {
         return performanceGrid;
     }
 
-    private void calculateEnrolmentsWithLastExecutionPeriod(PerformanceGridLine newLine, Tutorship tutorship,
-            ExecutionYear monitoringYear) {
-
+    private void calculateEnrolments(PerformanceGridLine newLine, Tutorship tutorship, ExecutionYear monitoringYear) {
         List<Enrolment> enrolments =
                 tutorship.getStudentCurricularPlan().getEnrolmentsWithExecutionYearBeforeOrEqualTo(monitoringYear);
-        Map<CurricularCourse, List<Enrolment>> enrolmentsByCurricularCourse = getEnrolmentsByCurricularCourse(enrolments);
-
-        List<Enrolment> enrolmentsWithLastExecutionPeriod = new ArrayList<Enrolment>();
-        for (CurricularCourse curricular : enrolmentsByCurricularCourse.keySet()) {
-            Enrolment enrolment = Enrolment.getEnrolmentWithLastExecutionPeriod(enrolmentsByCurricularCourse.get(curricular));
-            enrolmentsWithLastExecutionPeriod.add(enrolment);
-        }
-
-        newLine.setEnrolmentsWithLastExecutionPeriod(enrolmentsWithLastExecutionPeriod);
+        newLine.setEnrolmentsWithLastExecutionPeriod(enrolments);
     }
 
     private Map<CurricularCourse, List<Enrolment>> getEnrolmentsByCurricularCourse(List<Enrolment> enrolments) {
@@ -153,7 +143,7 @@ public class CreatePerformanceGridTable {
 
         for (Enrolment enrolment : newLine.getEnrolmentsWithLastExecutionPeriod()) {
             CurricularCourse curricular = enrolment.getCurricularCourse();
-            DegreeModuleScope scope = curricular.getOldestDegreeModuleScope();
+            DegreeModuleScope scope = curricular.getActiveDegreeModuleScopesInAcademicInterval(enrolment.getExecutionPeriod().getAcademicInterval()).get(0);
             PerformanceGridLineYearGroup bean = studentPerformanceByYearArray[Math.min(scope.getCurricularYear(), max_years) - 1];
             bean.addEnrolmentToSemester(scope, curricular, enrolment);
         }
