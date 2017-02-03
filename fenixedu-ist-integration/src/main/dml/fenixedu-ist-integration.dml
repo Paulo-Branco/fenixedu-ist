@@ -66,7 +66,10 @@ class accounting.events.export.SIBSOutgoingPaymentFile extends accounting.events
 
 class accounting.events.export.SIBSOutgoingPaymentQueueJob extends .org.fenixedu.academic.domain.QueueJob {
     DateTime lastSuccessfulSentPaymentFileDate;
-} 
+}
+
+class StudentMeritReportQueueJob extends .org.fenixedu.academic.domain.QueueJobWithFile {
+}
 
 class UnitFile extends .org.fenixedu.academic.domain.File {
     String description;
@@ -90,6 +93,13 @@ class serviceRequests.IstRegistryCodeGenerator extends .org.fenixedu.academic.do
 }
 
 class student.PreEnrolment {
+}
+
+relation StudentMeritReportExecutionYear {
+    .org.fenixedu.academic.domain.ExecutionYear playsRole executionYear;
+    StudentMeritReportQueueJob playsRole meritReportFile {
+        multiplicity 0..1;
+    }
 }
 
 relation PreEnrolmentExecutionSemester {
